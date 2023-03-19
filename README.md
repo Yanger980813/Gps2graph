@@ -1,6 +1,8 @@
 # GPS2Graph
 Convert GPS trajectory data into graph data
 
+<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/diagrammatic.png" width="400" height="180">
+
 ***
 
 #### Usage:
