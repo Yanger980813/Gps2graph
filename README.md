@@ -10,7 +10,7 @@ Convert GPS trajectory data into graph data
 1.create and activate your conda environment
 
 ```python
-conda create -n name python=3.8
+conda create -n name python==3.8
 activate name
 ```
 
@@ -28,3 +28,9 @@ pip install -r requirements.txt
 python gps2graph.py
 ```
 
+***
+
+#### Notes:
+
+1.raw data link [scrg](https://cse.hkust.edu.hk/scrg/)
+2.io matrix: traffic flow and average travel time from one node to another over a period of time
