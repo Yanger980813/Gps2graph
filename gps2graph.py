@@ -1,19 +1,17 @@
-'''
+"""
 Author: Zhengke Sun
-Date: 2023/3/18
+Update: 2023/3/28
 Contact: zhengkesun@outlook.com
-'''
+"""
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, \
     QFileDialog, QDesktopWidget, QMessageBox, QTextEdit
 from PyQt5 import QtGui
 import sys
-import datetime
-import numpy as np
-from sklearn.cluster import KMeans
 import pandas as pd
-from scipy.spatial.distance import cdist
-from einops import rearrange
 from tqdm import tqdm
+from methods.gridio import grid_io
+from utils import cal_speed
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -45,14 +43,15 @@ class MainWindow(QMainWindow):
         self.textbox.setUndoRedoEnabled(True)
         self.textbox.setLineWrapMode(QTextEdit.WidgetWidth)
 
-        self.textbox.resize(800, 200)
-        self.textbox.setPlaceholderText("Please enter the column titles\n"
-                                        "Default: 'id', 'datetime','longitude', 'latitude', 'speed', 'angle', 'status'\n"
-                                        "At least: 'id', 'datetime', 'longitude', and 'latitude'")
-        self.textbox.setText("'id', 'datetime', 'longitude', 'latitude', 'speed', 'angle', 'status'")
+        self.textbox.resize(850, 200)
+        self.textbox.setPlaceholderText("Enter column titles, the side length number of grid cells, io interval\n"
+                                        "Default: 'id', 'datetime', 'longitude', 'latitude', "
+                                        "'speed', 'angle', 'status', '10', '3'\n"
+                                        "At least: 'id', 'datetime', 'longitude', 'latitude', '10', '3'")
+        # self.textbox.setText("'id', 'datetime', 'longitude', 'latitude', 'speed', 'angle', 'status', '10', '3'")
         font2 = QtGui.QFont('Arial', 12)
         self.textbox.setFont(font2)
-        text_width = 800
+        text_width = 850
         text_height = 300
         self.textbox.move(int((window_width - text_width) / 2), int((window_height - text_height) / 2) - 100)
 
@@ -63,124 +62,60 @@ class MainWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    # Calculate speed(if necessary)
-    def cal_speed(self, df):
-        time_diff = df['datetime'].diff().dt.total_seconds().fillna(0)
-        distance_diff = np.sqrt(((df['latitude'].diff() * 111320) ** 2) + ((df['longitude'].diff() * 111320) ** 2)).fillna(0)
-        df['speed'] = distance_diff / time_diff
-        df.replace([np.inf, -np.inf], np.nan, inplace=True)
-        df.dropna(inplace=True)
-        return df
-
     def upload_file(self):
         file_filter = "CSV files (*.csv);;Text files (*.txt);;All files (**)"
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_names, _ = QFileDialog.getOpenFileNames(self, "choose GPS trajectory files", "",
-                                                    file_filter, options=options)
+                                                     file_filter, options=options)
 
         if file_names:
             # Split text
             input_text = self.textbox.toPlainText()
+            if input_text == '':
+                input_text = "'id', 'datetime', 'longitude', 'latitude', 'speed', 'angle', 'status', '10', '3'"
             input_text = input_text.replace("'", "")
             elements = input_text.split(", ")
             output_list = [element.strip() for element in elements]
+            blocks_num = int(output_list[-2])
+            io_interval = int(output_list[-1])
+            output_list = output_list[0:-2]
             # If data need to calculate speed
             get_speed = False
             if 'speed' not in output_list:
                 get_speed = True
-            ## Get adjacency matrix
+            # Get full data
             df = pd.DataFrame()
-            for file in file_names:
+            print('Processing data')
+            for file in tqdm(file_names):
                 df_temp = pd.read_csv(file, names=output_list)
                 df_temp['datetime'] = pd.to_datetime(df_temp['datetime'])
-                if get_speed == True:
-                    df_temp = self.cal_speed(df_temp)
+                if get_speed is True:
+                    df_temp = cal_speed(df_temp)
                 df = pd.concat([df, df_temp], axis=0)
 
-            # Clustering
-            kmeans = KMeans(n_clusters=50)
-            kmeans.fit(df[['longitude', 'latitude']])
-            centroids = kmeans.cluster_centers_
-            df['label'] = kmeans.predict(df[['longitude', 'latitude']])
+            # [Start]select the methods
+            grid_io(df, blocks_num=blocks_num, io_interval=io_interval)
 
-            # Main nodes
-            main_nodes = []
-            for i in range(len(centroids)):
-                main_nodes.append({'id': i, 'longitude': centroids[i][0], 'latitude': centroids[i][1]})
-
-            # Distance
-            dist_matrix = cdist(centroids, centroids, 'euclidean') * 111.32
-            threshold = 20.0
-            adjacency_matrix = np.zeros((len(centroids), len(centroids)), dtype=int)
-            for i in range(len(centroids)):
-                for j in range(len(centroids)):
-                    if i == j:
-                        adjacency_matrix[i, j] = 0
-                    elif dist_matrix[i, j] < threshold:
-                        adjacency_matrix[i, j] = 1
-                    else:
-                        adjacency_matrix[i, j] = 0
-
-            # Save adjacency matrix
-            adjacency_matrix = pd.DataFrame(adjacency_matrix)
-            adjacency_matrix.to_csv('./saved_files/adjacency_matrix.csv', header=False, index=False)
-
-            ## Get feature matrix
-            time_interval = datetime.timedelta(minutes=5)
-            df = df.sort_values(by=['datetime'])
-            groups = df.groupby(pd.Grouper(key='datetime', freq=time_interval))
-            speeds = []
-            flows = []
-
-            # Nodes
-            for i in tqdm(range(len(main_nodes))):
-                node_speeds = []
-                node_flows = []
-
-                # Time and Labels
-                for name, group in groups:
-                    group = group[group['label'] == i]
-                    count = len(group)
-                    if count > 0:
-                        speed = group['speed'].mean()
-                        node_speeds.append(speed)
-                        node_flows.append(count)
-                    else:
-                        node_speeds.append(0)
-                        node_flows.append(0)
-
-                speeds.append(node_speeds)
-                flows.append(node_flows)
-
-            speeds = np.array(speeds)
-            flows = np.array(flows)
-
-            speeds = rearrange(speeds, 'n t -> t n 1')
-            flows = rearrange(flows, 'n t -> t n 1')
-            feature_matrix = np.concatenate([speeds, flows], axis=2)
-            np.save('./saved_files/feature_matrix.npy', feature_matrix)
+            # [End]select the methods
 
             success = True
         else:
             success = False
 
         if success:
-
             QMessageBox.information(self,
                                     "Finished",
-                                    "The adjacency matrix has been saved to adjacency_matrix.csv, "
-                                    "the feature matrix has been saved to feature_matrix.npy",
+                                    "The results have been saved!",
                                     buttons=QMessageBox.Ok)
         else:
-
             QMessageBox.information(self,
                                     "Unfinished",
-                                    "Please upload files",
+                                    "Please upload files and choose methods",
                                     buttons=QMessageBox.Ok)
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
