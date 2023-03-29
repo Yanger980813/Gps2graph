@@ -1,10 +1,11 @@
 """
 Author: Zhengke Sun
-Update: 2023/3/28
+Update: 2023/3/29
 Contact: zhengkesun@outlook.com
 """
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, \
-    QFileDialog, QDesktopWidget, QMessageBox, QTextEdit
+from PyQt5.QtWidgets import QApplication, QPushButton, \
+    QFileDialog, QDesktopWidget, QMessageBox, QTextEdit, QVBoxLayout, \
+    QWidget, QSpacerItem, QSizePolicy
 from PyQt5 import QtGui
 import sys
 import pandas as pd
@@ -13,7 +14,7 @@ from methods.gridio import grid_io
 from utils import cal_speed
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -21,17 +22,12 @@ class MainWindow(QMainWindow):
         self.resize(1000, 618)
         self.setWindowTitle('GPS2Graph')
         self.center()
+        vbox = QVBoxLayout(self)
 
         # Button
-        self.button_upload = QPushButton('upload your files', self)
-        self.button_upload.setFixedSize(300, 50)
-        font1 = QtGui.QFont('Arial', 15)
+        self.button_upload = QPushButton('upload files', self)
+        font1 = QtGui.QFont('Segoe Print', 15)
         self.button_upload.setFont(font1)
-        button_width = 300
-        button_height = 50
-        window_width = self.width()
-        window_height = self.height()
-        self.button_upload.move(int((window_width - button_width) / 2), int((window_height - button_height) / 2) + 150)
 
         # Connection
         self.button_upload.clicked.connect(self.upload_file)
@@ -42,18 +38,24 @@ class MainWindow(QMainWindow):
         self.textbox.setTabChangesFocus(True)
         self.textbox.setUndoRedoEnabled(True)
         self.textbox.setLineWrapMode(QTextEdit.WidgetWidth)
-
-        self.textbox.resize(850, 200)
-        self.textbox.setPlaceholderText("Enter column titles, the side length number of grid cells, io interval\n"
+        self.textbox.setPlaceholderText("Enter column titles, the side length number of grid cells and io time "
+                                        "interval\n"
+                                        "\n"
                                         "Default: 'id', 'datetime', 'longitude', 'latitude', "
                                         "'speed', 'angle', 'status', '10', '3'\n"
                                         "At least: 'id', 'datetime', 'longitude', 'latitude', '10', '3'")
-        # self.textbox.setText("'id', 'datetime', 'longitude', 'latitude', 'speed', 'angle', 'status', '10', '3'")
-        font2 = QtGui.QFont('Arial', 12)
+
+        font2 = QtGui.QFont('Times New Roman', 14)
         self.textbox.setFont(font2)
-        text_width = 850
-        text_height = 300
-        self.textbox.move(int((window_width - text_width) / 2), int((window_height - text_height) / 2) - 100)
+
+        # Set layout
+        spacer_item_1 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        vbox.addItem(spacer_item_1)
+        vbox.addWidget(self.textbox, 2)
+        spacer_item_2 = QSpacerItem(20, 250, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        vbox.addItem(spacer_item_2)
+        vbox.addWidget(self.button_upload, 1)
+        self.setLayout(vbox)
 
     # Move window to center
     def center(self):
@@ -96,7 +98,6 @@ class MainWindow(QMainWindow):
 
             # [Start]select the methods
             grid_io(df, blocks_num=blocks_num, io_interval=io_interval)
-
             # [End]select the methods
 
             success = True
@@ -111,11 +112,12 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.information(self,
                                     "Unfinished",
-                                    "Please upload files and choose methods",
+                                    "Please upload files!",
                                     buttons=QMessageBox.Ok)
 
 
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
