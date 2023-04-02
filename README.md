@@ -1,5 +1,19 @@
 # GPS2Graph
-Convert GPS trajectory data into graph data
+Transform GPS trajectory data into graph data!
+
+Latest version: 0.0.1
+
+#### Notes:
+
+1.raw data link for test [scrg](https://cse.hkust.edu.hk/scrg/)
+
+2.inputs: raw trajectory data; outputs: adjacency matrix, feature matrix, io matrix
+
+3.io matrix: traffic flow and average travel time from one node to another over a period of time(default is 3 hours, you can set it yourself)
+
+4.the time period for calculating average traffic speed is 5 minutes
+
+5.provide speed calculation function
 
 <img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/diagrammatic.png" width="800" height="360">
 
@@ -28,10 +42,15 @@ pip install -r requirements.txt
 python gps2graph.py
 ```
 
+5.upload files and set parameters
+
 ***
 
-#### Notes:
+#### Future works:
 
-1.raw data link [scrg](https://cse.hkust.edu.hk/scrg/)
+1.add more transformation methods
 
-2.io matrix: traffic flow and average travel time from one node to another over a period of time
+2.add settable parameters
+
+3.segment feature matrix to train set, validation set, and test set
+
