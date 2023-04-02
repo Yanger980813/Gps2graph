@@ -3,6 +3,10 @@ Transform GPS trajectory data into graph data!
 
 Latest version: 0.0.1
 
+<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/diagrammatic.png" width="800" height="360">
+
+***
+
 #### Notes:
 
 1.raw data link for test [scrg](https://cse.hkust.edu.hk/scrg/)
@@ -14,8 +18,6 @@ Latest version: 0.0.1
 4.the time period for calculating average traffic speed is 5 minutes
 
 5.provide speed calculation function
-
-<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/diagrammatic.png" width="800" height="360">
 
 ***
 
@@ -50,7 +52,7 @@ python gps2graph.py
 
 1.add more transformation methods
 
-2.add settable parameters
+2.add more settable parameters
 
 3.segment feature matrix to train set, validation set, and test set
 
