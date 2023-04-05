@@ -3,7 +3,7 @@ Transform GPS trajectory data into graph data!
 
 Latest version: 0.0.2
 
-<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/display.ppng" width="800" height="364">
+<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/display.png" width="800" height="364">
 
 ***
 
@@ -13,7 +13,7 @@ Latest version: 0.0.2
 
 2.inputs: raw trajectory data; outputs: adjacency matrix, feature matrix, io matrix, distance matrix
 
-3.io matrix: traffic flow and average travel time from one node to another over a period of time(default is 3 hours, you can set it yourself)
+3.io matrix: traffic flow and average travel time from one node to another over a period of time
 
 4.provide speed calculation function
 
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 python gps2graph.py
 ```
 
-5.upload files and set parameters
+5.upload files, set parameters and choose methods
 
 ***
 
