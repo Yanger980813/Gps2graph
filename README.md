@@ -5,17 +5,22 @@ Latest version: 0.0.2
 
 <img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/display.png" width="800" height="364">
 
+|    Method     |        Input        |                          Output                           |
+| :-----------: | :-----------------: | :-------------------------------------------------------: |
+| By clustering | raw trajectory data | distance matrix/io matrix/feature matrix/adjacency matrix |
+|    By grid    | raw trajectory data |         io matrix/feature matrix/adjacency matrix         |
+
 ***
 
 #### Notes:
 
 1.raw data link for test [scrg](https://cse.hkust.edu.hk/scrg/)
 
-2.inputs: raw trajectory data; outputs: adjacency matrix, feature matrix, io matrix, distance matrix
+2.io matrix: traffic flow and average travel time from one node to another over a period of time
 
-3.io matrix: traffic flow and average travel time from one node to another over a period of time
+3.Provide speed calculation function
 
-4.provide speed calculation function
+4.Map matching is temporarily not supported
 
 ***
 
