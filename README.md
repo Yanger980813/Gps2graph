@@ -5,10 +5,10 @@ Latest version: 0.0.2
 
 <img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/display.png" width="800" height="364">
 
-|    Method     |        Input        |                          Output                           |
-| :-----------: | :-----------------: | :-------------------------------------------------------: |
-| By clustering | raw trajectory data | distance matrix/io matrix/feature matrix/adjacency matrix |
-|    By grid    | raw trajectory data |         io matrix/feature matrix/adjacency matrix         |
+|    Method     |        Input        |                            Output                            |
+| :-----------: | :-----------------: | :----------------------------------------------------------: |
+| By clustering | raw trajectory data | distance matrix\|io matrix\|feature matrix\|adjacency matrix |
+|    By grid    | raw trajectory data |         io matrix\|feature matrix\|adjacency matrix          |
 
 ***
 
