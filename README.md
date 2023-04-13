@@ -3,7 +3,7 @@ Transform GPS trajectory data into graph data!
 
 Latest version: 0.0.2
 
-<img decoding="async" src="https://github.com/zachysun/Gps2graph/blob/main/imgs/display.png" width="800" height="364">
+<img decoding="async" src="./imgs/display.png" width="800" height="364">
 
 |    Method     |        Input        |                            Output                            |
 | :-----------: | :-----------------: | :----------------------------------------------------------: |
