@@ -1,7 +1,5 @@
 # GPS2Graph
-Transform GPS trajectory data into graph data!
-
-Latest version: 0.0.2
+Transform GPS trajectory data into graph structure data!
 
 <img decoding="async" src="./imgs/display.png" width="800" height="364">
 
@@ -14,13 +12,13 @@ Latest version: 0.0.2
 
 #### Notes:
 
-1.raw data link for test [scrg](https://cse.hkust.edu.hk/scrg/)
+- raw data link for test [scrg](https://cse.hkust.edu.hk/scrg/)
 
-2.io matrix: traffic flow and average travel time from one node to another over a period of time
+- io matrix: traffic flow and average travel time from one node to another over a period of time
 
-3.Provide speed calculation function
+- Provide speed calculation function
 
-4.Map matching is temporarily not supported
+- Map matching is temporarily not supported
 
 ***
 
@@ -53,7 +51,15 @@ python gps2graph.py
 
 #### TODO:
 
-- [x] 1.add  transformation method with clustering
-- [x] 2.add more settable parameters
-- [ ] 3.segment feature matrix to train set, validation set, and test set
+- [x] add  transformation method with clustering
+- [x] add more settable parameters
+- [ ] segment feature matrix to train set, validation set, and test set
+- [ ] add adaptive grid transformation method
 
+---
+
+#### Useful Links:
+
+- [TransBigData](https://github.com/ni1o1/transbigdata)
+
+- [PySAL](https://github.com/pysal/pysal)
